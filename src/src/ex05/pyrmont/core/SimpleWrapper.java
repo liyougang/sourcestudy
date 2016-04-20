@@ -6,5 +6,10 @@ package ex05.pyrmont.core;
  * @version v1.0.0
  */
 public class SimpleWrapper implements Wrapper {
+
+	@Override
+	public void setLoader(Loader loader) {
+		
+	}
 	
 }
