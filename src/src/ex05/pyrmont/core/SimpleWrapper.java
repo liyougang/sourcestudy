@@ -16,19 +16,24 @@ import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Mapper;
+import org.apache.catalina.Pipeline;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.Valve;
 import org.apache.catalina.Wrapper;
 
 /**
  * 
  * @author gang.li
- * @date 2016-04-19 14:54
+ * @date 2016-04-19 14:54,
  * @version v1.0.0
  */
-public class SimpleWrapper implements Wrapper {
-
+public class SimpleWrapper implements Wrapper ,Pipeline{
+	// the servlet instance
+	private String name;
+	private Servlet instance = null;
+	private String servletClass =null;
 	private Loader loader = null;
 	protected Container parent = null;
 	private SimplePipeline pipeline = new SimplePipeline(this);
@@ -36,6 +41,67 @@ public class SimpleWrapper implements Wrapper {
 	public SimpleWrapper(){
 		pipeline.setBasic(new SimpleWrapperValve());
 	}
+	
+	  public Servlet allocate() throws ServletException {
+		    // Load and initialize our instance if necessary
+		    if (instance==null) {
+		      try {
+		        instance = loadServlet();
+		      }
+		      catch (ServletException e) {
+		        throw e;
+		      }
+		      catch (Throwable e) {
+		        throw new ServletException("Cannot allocate a servlet instance", e);
+		      }
+		    }
+		    return instance;
+		  }
+
+		  private Servlet loadServlet() throws ServletException {
+		    if (instance!=null)
+		      return instance;
+
+		    Servlet servlet = null;
+		    String actualClass = servletClass;
+		    if (actualClass == null) {
+		      throw new ServletException("servlet class has not been specified");
+		    }
+
+		    Loader loader = getLoader();
+		    // Acquire an instance of the class loader to be used
+		    if (loader==null) {
+		      throw new ServletException("No loader.");
+		    }
+		    ClassLoader classLoader = loader.getClassLoader();
+
+		    // Load the specified servlet class from the appropriate class loader
+		    Class classClass = null;
+		    try {
+		      if (classLoader!=null) {
+		        classClass = classLoader.loadClass(actualClass);
+		      }
+		    }
+		    catch (ClassNotFoundException e) {
+		      throw new ServletException("Servlet class not found");
+		    }
+		    // Instantiate and initialize an instance of the servlet class itself
+		    try {
+		      servlet = (Servlet) classClass.newInstance();
+		    }
+		    catch (Throwable e) {
+		      throw new ServletException("Failed to instantiate servlet");
+		    }
+
+		    // Call the initialization method of this servlet
+		    try {
+		      servlet.init(null);
+		    }
+		    catch (Throwable f) {
+		      throw new ServletException("Failed initialize servlet.");
+		    }
+		    return servlet;
+		  }
 	
 	public Loader getLoader() {
 		if(loader !=null ){
@@ -49,7 +115,7 @@ public class SimpleWrapper implements Wrapper {
 
 	@Override
 	public void setLoader(Loader loader) {
-		
+		this.loader = loader;
 	}
 
 	@Override
@@ -97,13 +163,12 @@ public class SimpleWrapper implements Wrapper {
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
-		return null;
+		return this.name;
 	}
 
 	@Override
 	public void setName(String name) {
-		// TODO Auto-generated method stub
-		
+		this.name = name ;
 	}
 
 	@Override
@@ -212,7 +277,7 @@ public class SimpleWrapper implements Wrapper {
 	public void invoke(Request request, Response response) throws IOException,
 			ServletException {
 		// TODO Auto-generated method stub
-		
+		pipeline.invoke(request, response);
 	}
 
 	@Override
@@ -302,7 +367,7 @@ public class SimpleWrapper implements Wrapper {
 	@Override
 	public void setServletClass(String servletClass) {
 		// TODO Auto-generated method stub
-		
+		this.servletClass = servletClass;
 	}
 
 	@Override
@@ -329,11 +394,6 @@ public class SimpleWrapper implements Wrapper {
 		
 	}
 
-	@Override
-	public Servlet allocate() throws ServletException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void deallocate(Servlet servlet) throws ServletException {
@@ -368,7 +428,7 @@ public class SimpleWrapper implements Wrapper {
 	@Override
 	public void load() throws ServletException {
 		// TODO Auto-generated method stub
-		
+		instance = loadServlet();
 	}
 
 	@Override
@@ -399,6 +459,33 @@ public class SimpleWrapper implements Wrapper {
 	public void unload() throws ServletException {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Valve getBasic() {
+		return pipeline.getBasic();
+	}
+
+	@Override
+	public void setBasic(Valve valve) {
+		pipeline.setBasic(valve);
+	}
+
+	@Override
+	public synchronized void addValve(Valve valve) {
+		// TODO Auto-generated method stub
+		pipeline.addValve(valve);
+	}
+
+	@Override
+	public Valve[] getValves() {
+		// TODO Auto-generated method stub
+		return pipeline.getValves();
+	}
+
+	@Override
+	public void removeValve(Valve valve) {
+		pipeline.removeValve(valve);
 	}
 	
 }

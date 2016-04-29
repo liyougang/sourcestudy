@@ -20,13 +20,12 @@ import org.apache.catalina.Loader;
  */
 public class SimpleLoader implements Loader{
 	//servlet 加载路径
-	public static final String WEB_ROOT = System.getProperty("user.dir") + File.separator +"webroot";
+	//public static final String WEB_ROOT = System.getProperty("user.dir") + File.separator +"webroot";
+	public static final String WEB_ROOT = "f:" + File.separator +"demotomcat" + File.separator +"webapps";
 	ClassLoader classLoader = null;
 	Container container = null;
 	
 	public SimpleLoader(){
-		
-		
 		try {
 			URL[] urls = new URL[1];
 			URLStreamHandler streamHandler = null;
@@ -42,7 +41,6 @@ public class SimpleLoader implements Loader{
 			e.printStackTrace();
 		}
 		
-		classLoader = null;
 	}
 
 	@Override

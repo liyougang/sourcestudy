@@ -23,17 +23,17 @@ import org.apache.catalina.ValveContext;
  * @version 1.0.0 
  */
 public class SimpleWrapperValve implements Valve ,Contained{
-
+	private Container container = null;
 	@Override
 	public Container getContainer() {
 		// TODO Auto-generated method stub
-		return null;
+		return this.container;
 	}
 
 	@Override
 	public void setContainer(Container container) {
 		// TODO Auto-generated method stub
-		
+		this.container = container;
 	}
 
 	@Override
