@@ -150,7 +150,7 @@ public class SimpleLoader implements Loader ,Lifecycle{
 
 	@Override
 	public void start() throws LifecycleException {
-		
+		System.out.println("start the loader");
 	}
 
 	@Override

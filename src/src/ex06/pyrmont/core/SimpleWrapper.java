@@ -510,6 +510,7 @@ public class SimpleWrapper implements Wrapper ,Pipeline ,Lifecycle{
 
 	@Override
 	public void start() throws LifecycleException {
+		System.out.println("starting the wrapper :"+name);
 		if(started){
 			throw new LifecycleException("SimpleWrapper has started");
 		}
@@ -521,12 +522,6 @@ public class SimpleWrapper implements Wrapper ,Pipeline ,Lifecycle{
 			//Start our subordinate components, if any
 			if(loader != null && loader instanceof Lifecycle){
 				((Lifecycle) loader).start();
-			}
-			
-			//start children components ,if any
-			Container children[] = findChildren();
-			for(int i = 0 ;i<children.length ;i++){
-				((Lifecycle) children[i]).start();
 			}
 			
 			// Start the Valves in our pipeline (including the basic),
@@ -541,12 +536,20 @@ public class SimpleWrapper implements Wrapper ,Pipeline ,Lifecycle{
 		catch (Exception e){
 			e.printStackTrace();
 		}
+		lifecycle.fireLifecycleEvent(Lifecycle.AFTER_START_EVENT, null);
 	}
 
 	@Override
 	public void stop() throws LifecycleException {
+		System.out.println("stop the wrapper :"+name);
 		if(!started){
 			throw new LifecycleException("SimpleWrapper has been stoped");
+		}
+		try{
+			instance.destroy();
+		}
+		catch(Throwable T){
+			
 		}
 		
 		lifecycle.fireLifecycleEvent(Lifecycle.BEFORE_START_EVENT, null);
@@ -560,11 +563,6 @@ public class SimpleWrapper implements Wrapper ,Pipeline ,Lifecycle{
 				
 			}
 			
-			//stop children components ,if any
-			Container children[] = findChildren();
-			for(int i = 0 ;i<children.length ;i++){
-				((Lifecycle) children[i]).stop();
-			}
 			
 			//stop our subordinate components, if any
 			if(loader != null && loader instanceof Lifecycle){
@@ -575,6 +573,7 @@ public class SimpleWrapper implements Wrapper ,Pipeline ,Lifecycle{
 		catch(Exception e){
 			e.printStackTrace();
 		}
+		lifecycle.fireLifecycleEvent(Lifecycle.AFTER_STOP_EVENT, null);
 	}
 	
 }
