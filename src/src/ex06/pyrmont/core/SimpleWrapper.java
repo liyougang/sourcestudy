@@ -179,13 +179,13 @@ public class SimpleWrapper implements Wrapper ,Pipeline ,Lifecycle{
 	@Override
 	public Container getParent() {
 		// TODO Auto-generated method stub
-		return null;
+		return parent;
 	}
 
 	@Override
 	public void setParent(Container container) {
 		// TODO Auto-generated method stub
-		
+		this.parent = container;
 	}
 
 	@Override
