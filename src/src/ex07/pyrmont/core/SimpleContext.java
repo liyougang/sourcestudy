@@ -1,4 +1,4 @@
-package ex06.pyrmont.core;
+package ex07.pyrmont.core;
 
 
 import java.beans.PropertyChangeListener;
@@ -56,7 +56,7 @@ public class SimpleContext implements Context, Pipeline ,Lifecycle{
   private Container parent = null;
   private LifecycleSupport lifecycle = new LifecycleSupport(this);
   private boolean started = false;
-  private Logger logger =null;
+  
   public Object[] getApplicationListeners() {
     return null;
   }
@@ -506,11 +506,10 @@ public class SimpleContext implements Context, Pipeline ,Lifecycle{
   }
 
   public Logger getLogger() {
-    return logger;
+    return null;
   }
 
   public void setLogger(Logger logger) {
-	  this.logger = logger;
   }
 
   public Manager getManager() {
@@ -692,7 +691,7 @@ public void removeLifecycleListener(LifecycleListener listener) {
 
 @Override
 public void start() throws LifecycleException {
-	log("SimpleContext start");
+	
 	if(started){
 		throw new LifecycleException("SimpleContext has started");
 	}
@@ -728,13 +727,12 @@ public void start() throws LifecycleException {
 		e.printStackTrace();
 	}
 	//after started
-	lifecycle.fireLifecycleEvent(Lifecycle.AFTER_START_EVENT, null);
-	log("SimpleContext start end");
+			lifecycle.fireLifecycleEvent(Lifecycle.AFTER_START_EVENT, null);
 }
 
 @Override
 public void stop() throws LifecycleException {
-	log("SimpleContext stop");
+
 	if(!started){
 		throw new LifecycleException("SimpleContext has not been started");
 	}
@@ -764,14 +762,7 @@ public void stop() throws LifecycleException {
 	}catch(Exception e){
 		e.printStackTrace();
 	}
-	log("SimpleContext end");
 	
-}
-private void log(String msg){
-	Logger logger = this.logger;
-	if(logger != null){
-		logger.log(msg);
-	}
 }
 
 }

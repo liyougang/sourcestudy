@@ -13,13 +13,13 @@ import org.apache.catalina.Valve;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.http.HttpConnector;
 
-import ex06.pyrmont.core.ClientIPLoggerValve;
 import ex06.pyrmont.core.HeaderLogerValve;
 import ex06.pyrmont.core.SimpleContext;
 import ex06.pyrmont.core.SimpleContextLifecycleListener;
 import ex06.pyrmont.core.SimpleContextMapper;
 import ex06.pyrmont.core.SimpleLoader;
 import ex06.pyrmont.core.SimpleWrapper;
+import ex07.pyrmont.core.ClientIPLoggerValve;
 
 /** 
  * @author:gang.li
