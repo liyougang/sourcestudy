@@ -836,4 +836,8 @@ public class StandardManager
         }
 
     }
+    
+    public static void main(String[] args){
+    	new StandardManager().createSession();
+    }
 }
