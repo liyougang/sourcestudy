@@ -63,7 +63,7 @@ public class SimpleContextConfig implements LifecycleListener {
 	    }
 	    
 	    //Identify the class name of Valve we should configure
-	    String authenticatorName = "org.apache.catalina.authenticator.BasicAuthenticato";
+	    String authenticatorName = "org.apache.catalina.authenticator.BasicAuthenticator";
 	    // Instantiate and install an Authenticator of the requested class
 	    Valve authenticator = null;
 	    try {

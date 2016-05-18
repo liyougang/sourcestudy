@@ -19,7 +19,7 @@ import org.apache.catalina.realm.GenericPrincipal;
 public class SimpleRealm implements Realm{
 	
 	private Container container;
-	private ArrayList users;
+	private ArrayList users = new ArrayList();
 	public SimpleRealm(){
 		createUserDateBase();
 	}
@@ -38,12 +38,11 @@ public class SimpleRealm implements Realm{
 	@Override
 	public String getInfo() {
 		// TODO Auto-generated method stub
-		return null;
+		return "a Simple Realm implementation";
 	}
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -83,8 +82,17 @@ public class SimpleRealm implements Realm{
 
 	@Override
 	public boolean hasRole(Principal principal, String role) {
-		// TODO Auto-generated method stub
-		return false;
+		if(principal == null || role ==null ||!( principal instanceof GenericPrincipal)){
+			return false;
+		}
+		
+		GenericPrincipal gp = (GenericPrincipal) principal;
+		if(!(gp.getRealm() == this)){
+			return false;
+		}
+		
+		boolean result = gp.hasRole(role);
+		return result;
 	}
 
 	@Override
@@ -105,6 +113,7 @@ public class SimpleRealm implements Realm{
 	}
 	
 	private void createUserDateBase(){
+		
 		User userl = new User("ken", "blackcomb");
 		userl.addRole("manager");
 		userl.addRole("programmer");

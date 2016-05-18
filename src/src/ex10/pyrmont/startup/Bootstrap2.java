@@ -2,6 +2,7 @@ package ex10.pyrmont.startup;
 
 import ex10.pyrmont.core.SimpleWrapper;
 import ex10.pyrmont.core.SimpleContextConfig;
+import ex10.pyrmont.realm.SimpleUserDataBaseRealm;
 
 import org.apache.catalina.Connector;
 import org.apache.catalina.Context;
@@ -9,21 +10,24 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Manager;
+import org.apache.catalina.Realm;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.http.HttpConnector;
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.deploy.LoginConfig;
+import org.apache.catalina.deploy.SecurityCollection;
+import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.session.StandardManager;
 import org.apache.naming.resources.ProxyDirContext;
 
-public final class Bootstrap {
+public final class Bootstrap2 {
   public static void main(String[] args) {
 
     //invoke: http://localhost:8080/Modern or  http://localhost:8080/Primitive
 
     System.setProperty("catalina.base", System.getProperty("user.dir"));
-    System.out.println(System.getProperty("user.dir"));
     Connector connector = new HttpConnector();
     Wrapper wrapper1 = new SimpleWrapper();
     wrapper1.setName("Primitive");
@@ -51,6 +55,26 @@ public final class Bootstrap {
     // add ContextConfig. This listener is important because it configures
     // StandardContext (sets configured to true), otherwise StandardContext
     // won't start
+    
+    // add constraint
+    SecurityCollection securityCollection = new SecurityCollection();
+    securityCollection.addPattern("/");
+    securityCollection.addMethod("GET");
+    
+    SecurityConstraint securityConstraint = new SecurityConstraint();
+    securityConstraint.addCollection(securityCollection);
+    securityConstraint.addAuthRole("manager");
+    
+    LoginConfig loginConfig = new LoginConfig();
+    loginConfig.setRealmName("Simple UserDatebase Realm"); 
+    // add realm 
+    Realm realm = new SimpleUserDataBaseRealm(); 
+    ((SimpleUserDataBaseRealm) realm).createDatebase("conf/tomcat-users.xml");
+    context.setRealm(realm); 
+    context.addConstraint(securityConstraint);
+    context.setLoginConfig(loginConfig);
+    
+    
     LifecycleListener listener = new SimpleContextConfig();
     ((Lifecycle) context).addLifecycleListener(listener);
 
